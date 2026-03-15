@@ -1,0 +1,686 @@
+// ============================================================
+//  GLOW MEDICAL — PRISMA SCHEMA (FINAL)
+//  PostgreSQL · Prisma ORM · Neon
+//  Run after changes: npx prisma migrate dev && npx prisma generate
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+//  ENUMS
+// ============================================================
+
+enum Role {
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum StaffType {
+  DOCTOR
+  BEAUTICIAN
+  RECEPTIONIST
+}
+
+enum StaffStatus {
+  ACTIVE
+  INACTIVE
+  ON_LEAVE
+}
+
+enum AppointmentSource {
+  WEBSITE
+  WHATSAPP
+  WALK_IN
+  PHONE
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  UNPAID
+  PARTIAL
+  PAID
+  REFUNDED
+}
+
+enum TransactionType {
+  REVENUE
+  EXPENSE
+  SALARY
+  REFUND
+}
+
+enum TransactionCategory {
+  APPOINTMENT_PAYMENT
+  PRODUCT_SALE
+  OTHER_INCOME
+  SUPPLIES
+  EQUIPMENT
+  UTILITIES
+  RENT
+  MARKETING
+  STAFF_SALARY
+  BONUS
+  PATIENT_REFUND
+}
+
+enum InventoryCategory {
+  CONSUMABLE
+  PRODUCT
+  EQUIPMENT
+  TOOL
+  MEDICATION
+}
+
+enum InventoryStatus {
+  IN_STOCK
+  LOW_STOCK
+  OUT_OF_STOCK
+  EXPIRED
+  DISCONTINUED
+}
+
+enum PatientStatus {
+  ACTIVE
+  INACTIVE
+  BLACKLISTED
+}
+
+enum MessageStatus {
+  UNREAD
+  READ
+  ARCHIVED
+  REPLIED
+}
+
+enum OfferType {
+  BUNDLE
+  SEASONAL
+  FIRST_VISIT
+  LOYALTY
+  FLASH
+}
+
+// WhatsApp template types
+enum WhatsAppTemplateType {
+  APPOINTMENT_REMINDER // auto-sent N min before appointment (sendBefore field)
+  APPOINTMENT_CONFIRMATION // sent on appointment confirm
+  APPOINTMENT_CANCELLATION // sent on cancel
+  APPOINTMENT_FOLLOWUP // sent 24h after treatment
+  PAYMENT_REMINDER // unpaid balance reminder
+  BIRTHDAY_GREETING // patient birthday
+  PROMOTIONAL // manual offer blasts
+  CUSTOM // free-form
+}
+
+enum WhatsAppLogStatus {
+  SENT
+  DELIVERED
+  FAILED
+  PENDING
+}
+
+// ============================================================
+//  AUTH
+// ============================================================
+
+model AdminUser {
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(ADMIN)
+  avatar       String?
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([isActive])
+  @@map("admin_users")
+}
+
+// ============================================================
+//  CLINIC SETTINGS
+// ============================================================
+
+model ClinicSetting {
+  id              Int           @id @default(autoincrement())
+  clinicName      String        @default("Glow Medical")
+  tagline         String?
+  phone           String?
+  phone2          String?
+  email           String?
+  address         String?
+  mapUrl          String?
+  workingHours    String?
+  whatsapp        String?
+  facebook        String?
+  instagram       String?
+  twitter         String?
+  tiktok          String?
+  logoUrl         String?
+  faviconUrl      String?
+  aboutText       String?       @db.Text
+  metaTitle       String?
+  metaDescription String?
+  updatedAt       DateTime      @updatedAt
+  galleryImages   ClinicImage[]
+
+  @@map("clinic_settings")
+}
+
+model ClinicImage {
+  id        Int           @id @default(autoincrement())
+  url       String
+  alt       String?
+  order     Int           @default(0)
+  setting   ClinicSetting @relation(fields: [settingId], references: [id], onDelete: Cascade)
+  settingId Int
+  createdAt DateTime      @default(now())
+
+  @@map("clinic_images")
+}
+
+// ============================================================
+//  CATEGORIES & SERVICES
+// ============================================================
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String
+  slug        String    @unique
+  description String?
+  icon        String?
+  imageUrl    String?
+  color       String?
+  isActive    Boolean   @default(true)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  services    Service[]
+
+  @@map("categories")
+}
+
+model Service {
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  slug                String               @unique
+  description         String?              @db.Text
+  shortDescription    String?
+  price               Decimal              @db.Decimal(10, 2)
+  discountedPrice     Decimal?             @db.Decimal(10, 2)
+  duration            Int? // minutes
+  imageUrl            String?
+  isActive            Boolean              @default(true)
+  isFeatured          Boolean              @default(false)
+  order               Int                  @default(0)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  category            Category             @relation(fields: [categoryId], references: [id])
+  categoryId          Int
+  appointmentServices AppointmentService[]
+  offerServices       OfferService[]
+
+  @@map("services")
+}
+
+// ============================================================
+//  OFFERS
+// ============================================================
+
+model Offer {
+  id                Int                @id @default(autoincrement())
+  title             String
+  slug              String             @unique
+  description       String?            @db.Text
+  type              OfferType          @default(BUNDLE)
+  imageUrl          String?
+  originalPrice     Decimal            @db.Decimal(10, 2)
+  finalPrice        Decimal            @db.Decimal(10, 2)
+  discountPct       Int?
+  validFrom         DateTime?
+  validUntil        DateTime?
+  isActive          Boolean            @default(true)
+  isFeatured        Boolean            @default(false)
+  usageLimit        Int?
+  usageCount        Int                @default(0)
+  termsText         String?            @db.Text
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  services          OfferService[]
+  appointmentOffers AppointmentOffer[]
+
+  @@map("offers")
+}
+
+model OfferService {
+  offer     Offer   @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  offerId   Int
+  service   Service @relation(fields: [serviceId], references: [id])
+  serviceId Int
+
+  @@id([offerId, serviceId])
+  @@map("offer_services")
+}
+
+// ============================================================
+//  PATIENTS
+// ============================================================
+
+model Patient {
+  id             Int           @id @default(autoincrement())
+  fullName       String
+  phone          String        @unique
+  phone2         String?
+  email          String?
+  gender         Gender?
+  dateOfBirth    DateTime?
+  nationalId     String?       @unique
+  address        String?
+  bloodType      String?
+  allergies      String?       @db.Text
+  medicalNotes   String?       @db.Text
+  status         PatientStatus @default(ACTIVE)
+  isAutoCreated  Boolean       @default(false)
+  referralSource String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  appointments   Appointment[]
+
+  @@map("patients")
+}
+
+// ============================================================
+//  TEAM / STAFF
+// ============================================================
+
+model StaffMember {
+  id             Int             @id @default(autoincrement())
+  staffType      StaffType
+  name           String
+  nameEn         String?
+  phone          String?
+  email          String?
+  gender         Gender?
+  dateOfBirth    DateTime?
+  nationalId     String?         @unique
+  photo          String?
+  bio            String?         @db.Text
+  specialization String?
+  qualifications String?         @db.Text
+  experience     Int? // years
+  licenseNumber  String?
+  status         StaffStatus     @default(ACTIVE)
+  hireDate       DateTime?
+  endDate        DateTime?
+  baseSalary     Decimal?        @db.Decimal(10, 2)
+  salaryType     String? // monthly | hourly | commission
+  commission     Decimal?        @db.Decimal(5, 2) // percentage
+  isPublic       Boolean         @default(true)
+  isFeatured     Boolean         @default(false)
+  instagramUrl   String?
+  linkedinUrl    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  appointments   Appointment[]
+  salaryPayments SalaryPayment[]
+
+  @@map("staff_members")
+}
+
+// ============================================================
+//  APPOINTMENTS
+// ============================================================
+
+model Appointment {
+  id               Int                  @id @default(autoincrement())
+  source           AppointmentSource    @default(WEBSITE)
+  status           AppointmentStatus    @default(PENDING)
+  appointmentDate  DateTime
+  durationMinutes  Int?
+  notes            String?              @db.Text
+  internalNotes    String?              @db.Text
+  paymentStatus    PaymentStatus        @default(UNPAID)
+  totalAmount      Decimal              @default(0) @db.Decimal(10, 2)
+  paidAmount       Decimal              @default(0) @db.Decimal(10, 2)
+  patientId        Int?
+  patient          Patient?             @relation(fields: [patientId], references: [id])
+  tempPatientName  String?
+  tempPatientPhone String?
+  staffId          Int?
+  staff            StaffMember?         @relation(fields: [staffId], references: [id])
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  services         AppointmentService[]
+  offers           AppointmentOffer[]
+  transactions     Transaction[]
+  whatsappLogs     WhatsAppLog[]
+
+  @@index([appointmentDate])
+  @@index([patientId])
+  @@index([status])
+  @@map("appointments")
+}
+
+model AppointmentService {
+  appointmentId Int
+  serviceId     Int
+  priceAtTime   Decimal     @db.Decimal(10, 2)
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  service       Service     @relation(fields: [serviceId], references: [id])
+
+  @@id([appointmentId, serviceId])
+  @@map("appointment_services")
+}
+
+model AppointmentOffer {
+  appointmentId Int
+  offerId       Int
+  priceAtTime   Decimal     @db.Decimal(10, 2)
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  offer         Offer       @relation(fields: [offerId], references: [id])
+
+  @@id([appointmentId, offerId])
+  @@map("appointment_offers")
+}
+
+// ============================================================
+//  FINANCE
+// ============================================================
+
+model Transaction {
+  id              Int                 @id @default(autoincrement())
+  type            TransactionType
+  category        TransactionCategory
+  amount          Decimal             @db.Decimal(10, 2)
+  description     String?
+  notes           String?             @db.Text
+  receiptUrl      String?
+  transactionDate DateTime            @default(now())
+  reference       String?
+  appointmentId   Int?
+  appointment     Appointment?        @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([type])
+  @@index([transactionDate])
+  @@map("transactions")
+}
+
+model SalaryPayment {
+  id          Int         @id @default(autoincrement())
+  staffId     Int
+  staff       StaffMember @relation(fields: [staffId], references: [id])
+  amount      Decimal     @db.Decimal(10, 2)
+  bonusAmount Decimal     @default(0) @db.Decimal(10, 2)
+  deductions  Decimal     @default(0) @db.Decimal(10, 2)
+  netAmount   Decimal     @db.Decimal(10, 2)
+  month       Int
+  year        Int
+  paidAt      DateTime?
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([staffId, month, year])
+  @@map("salary_payments")
+}
+
+// ============================================================
+//  INVENTORY
+// ============================================================
+
+model InventoryItem {
+  id              Int                 @id @default(autoincrement())
+  name            String
+  sku             String?             @unique
+  barcode         String?             @unique
+  category        InventoryCategory
+  status          InventoryStatus     @default(IN_STOCK)
+  description     String?
+  imageUrl        String?
+  unit            String              @default("piece")
+  quantity        Int                 @default(0)
+  minQuantity     Int                 @default(5)
+  reorderQuantity Int                 @default(10)
+  costPrice       Decimal?            @db.Decimal(10, 2)
+  sellingPrice    Decimal?            @db.Decimal(10, 2)
+  supplier        String?
+  supplierPhone   String?
+  expiryDate      DateTime?
+  lastRestockedAt DateTime?
+  isActive        Boolean             @default(true)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  movements       InventoryMovement[]
+
+  @@map("inventory_items")
+}
+
+model InventoryMovement {
+  id          Int           @id @default(autoincrement())
+  itemId      Int
+  item        InventoryItem @relation(fields: [itemId], references: [id])
+  type        String // RESTOCK | USED | ADJUSTMENT | EXPIRED | RETURNED
+  quantity    Int
+  notes       String?
+  reference   String?
+  performedBy String?
+  createdAt   DateTime      @default(now())
+
+  @@map("inventory_movements")
+}
+
+// ============================================================
+//  BLOG
+// ============================================================
+
+model BlogPost {
+  id             Int           @id @default(autoincrement())
+  title          String
+  slug           String        @unique
+  excerpt        String?       @db.Text
+  content        String        @db.Text
+  seoTitle       String?
+  seoDescription String?
+  coverImage     String?
+  readTime       Int? // minutes
+  isPublished    Boolean       @default(false)
+  isFeatured     Boolean       @default(false)
+  publishedAt    DateTime?
+  author         String        @default("Glow Medical Team")
+  tags           String[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  sections       BlogSection[]
+
+  @@map("blog_posts")
+}
+
+model BlogSection {
+  id       Int      @id @default(autoincrement())
+  postId   Int
+  post     BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  heading  String?
+  body     String   @db.Text
+  imageUrl String?
+  imageAlt String?
+  order    Int      @default(0)
+
+  @@map("blog_sections")
+}
+
+// ============================================================
+//  FAQ
+// ============================================================
+
+model FAQ {
+  id         Int      @id @default(autoincrement())
+  question   String
+  answer     String   @db.Text
+  category   String?
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  isFeatured Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("faqs")
+}
+
+// ============================================================
+//  CONTACT MESSAGES
+// ============================================================
+
+model ContactMessage {
+  id        Int           @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String        @db.Text
+  status    MessageStatus @default(UNREAD)
+  replyText String?       @db.Text
+  repliedAt DateTime?
+  ipAddress String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("contact_messages")
+}
+
+// ============================================================
+//  REVIEWS — Testimonials + Before/After Transformations
+// ============================================================
+
+model Testimonial {
+  id             Int                @id @default(autoincrement())
+  name           String // display name (can be anonymised: "Sara M.")
+  review         String             @db.Text
+  rating         Int                @default(5) // 1-5
+  avatar         String? // Cloudinary URL
+  avatarPublicId String? // Cloudinary public_id for deletion
+  isApproved     Boolean            @default(false)
+  isFeatured     Boolean            @default(false)
+  source         String? // "Google" | "Instagram" | "Direct"
+  serviceId      Int? // which service this review is about
+  patientId      Int? // optional link to patient record
+  treatmentDate  DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  images         TestimonialImage[]
+
+  @@map("testimonials")
+}
+
+model TestimonialImage {
+  id            Int         @id @default(autoincrement())
+  testimonialId Int
+  testimonial   Testimonial @relation(fields: [testimonialId], references: [id], onDelete: Cascade)
+  url           String // Cloudinary secure_url
+  publicId      String? // Cloudinary public_id for deletion
+  type          String      @default("before_after") // "before_after" | "result" | "selfie"
+  label         String? // "before" | "after" | null
+  order         Int         @default(0)
+  createdAt     DateTime    @default(now())
+
+  @@map("testimonial_images")
+}
+
+// ============================================================
+//  WHATSAPP — Templates & Logs (Twilio Sandbox)
+// ============================================================
+
+model WhatsAppTemplate {
+  id         Int                  @id @default(autoincrement())
+  name       String
+  type       WhatsAppTemplateType
+  bodyAr     String               @db.Text // Arabic with {{variable}} placeholders
+  bodyEn     String               @db.Text // English version
+  variables  String[] // ["name", "date", "time", "service", "doctor"]
+  isActive   Boolean              @default(true)
+  sendBefore Int? // minutes before appointment; null = manual only
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+  logs       WhatsAppLog[]
+
+  @@map("whatsapp_templates")
+}
+
+model WhatsAppLog {
+  id            Int               @id @default(autoincrement())
+  templateId    Int?
+  template      WhatsAppTemplate? @relation(fields: [templateId], references: [id])
+  toPhone       String
+  toName        String?
+  body          String            @db.Text
+  status        WhatsAppLogStatus @default(PENDING)
+  twilioSid     String?
+  errorMessage  String?
+  appointmentId Int?
+  appointment   Appointment?      @relation(fields: [appointmentId], references: [id])
+  sentAt        DateTime          @default(now())
+  createdAt     DateTime          @default(now())
+
+  @@index([status])
+  @@index([toPhone])
+  @@map("whatsapp_logs")
+}
+
+// ============================================================
+// ADD THESE TWO MODELS TO schema.prisma (at the end)
+// Then run: npx prisma migrate dev --name add_notifications_reports
+// ============================================================
+
+model AdminNotification {
+  id        Int      @id @default(autoincrement())
+  type      String // "new_appointment" | "new_message" | "new_review" | "low_stock" | "system"
+  title     String
+  body      String
+  href      String?
+  icon      String?
+  isRead    Boolean  @default(false)
+  isUrgent  Boolean  @default(false)
+  meta      Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("admin_notifications")
+}
+
+model SavedReport {
+  id         Int      @id @default(autoincrement())
+  name       String
+  period     String // "today" | "month" | "year"
+  year       Int
+  month      Int?
+  reportData Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("saved_reports")
+}
