@@ -16,17 +16,17 @@ import {
 /* ── Types ────────────────────────────────────────────────── */
 type OverviewData = {
   kpis: {
-    todayAppointments : { value: number; change: number }
-    monthAppointments : { value: number; change: number }
-    monthRevenue      : { value: number; change: number }
-    totalPatients     : { value: number; change: number }
+    todayAppointments: { value: number; change: number }
+    monthAppointments: { value: number; change: number }
+    monthRevenue: { value: number; change: number }
+    totalPatients: { value: number; change: number }
   }
-  alerts      : { lowStock: number; unreadMessages: number; pendingReviews: number }
-  todayStatus : Record<string, number>
+  alerts: { lowStock: number; unreadMessages: number; pendingReviews: number }
+  todayStatus: Record<string, number>
   revenueChart: { date: string; revenue: number }[]
-  sourceChart : Record<string, number>
-  topServices : { name: string; count: number }[]
-  upcoming    : any[]
+  sourceChart: Record<string, number>
+  topServices: { name: string; count: number }[]
+  upcoming: any[]
 }
 
 /* ── KPI Card ────────────────────────────────────────────── */
@@ -66,12 +66,12 @@ function KpiCard({
 
 /* ── Status donut label ──────────────────────────────────── */
 const STATUS_COLORS: Record<string, string> = {
-  PENDING    : '#d97706',
-  CONFIRMED  : '#2563eb',
+  PENDING: '#d97706',
+  CONFIRMED: '#2563eb',
   IN_PROGRESS: '#a855f7',
-  COMPLETED  : '#059669',
-  CANCELLED  : '#dc2626',
-  NO_SHOW    : '#6b7280',
+  COMPLETED: '#059669',
+  CANCELLED: '#dc2626',
+  NO_SHOW: '#6b7280',
 }
 
 const SOURCE_COLORS = ['#082b56', '#c49a6c', '#2563eb', '#059669']
@@ -79,9 +79,9 @@ const SOURCE_LABELS: Record<string, string> = { WEBSITE: 'Website', WHATSAPP: 'W
 
 /* ── Main component ──────────────────────────────────────── */
 export default function OverviewPage() {
-  const [data,    setData]    = useState<OverviewData | null>(null)
+  const [data, setData] = useState<OverviewData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error,   setError]   = useState('')
+  const [error, setError] = useState('')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -118,7 +118,7 @@ export default function OverviewPage() {
   const { kpis, alerts, todayStatus, revenueChart, sourceChart, topServices, upcoming } = data
 
   const sourceData = Object.entries(sourceChart).map(([k, v]) => ({ name: SOURCE_LABELS[k] ?? k, value: v }))
-  const statusData  = Object.entries(todayStatus).map(([k, v]) => ({ name: k, value: v }))
+  const statusData = Object.entries(todayStatus).map(([k, v]) => ({ name: k, value: v }))
 
   const maxService = Math.max(...topServices.map(s => s.count), 1)
 
@@ -158,10 +158,10 @@ export default function OverviewPage() {
 
       {/* ── KPI Cards ── */}
       <div className="grid-kpi" style={{ marginBottom: '1.25rem' }}>
-        <KpiCard icon={<CalendarDays size={17} />} label="Today's Appointments" value={kpis.todayAppointments.value}  change={kpis.todayAppointments.change}  color="#2563eb" />
-        <KpiCard icon={<CalendarDays size={17} />} label="This Month Appts"     value={kpis.monthAppointments.value} change={kpis.monthAppointments.change} color="#a855f7" />
-        <KpiCard icon={<DollarSign   size={17} />} label="Monthly Revenue"      value={kpis.monthRevenue.value}      change={kpis.monthRevenue.change}      color="#059669" prefix="EGP " />
-        <KpiCard icon={<Users        size={17} />} label="Total Patients"       value={kpis.totalPatients.value}     change={kpis.totalPatients.change}     color="#c49a6c" />
+        <KpiCard icon={<CalendarDays size={17} />} label="Today's Appointments" value={kpis.todayAppointments.value} change={kpis.todayAppointments.change} color="#2563eb" />
+        <KpiCard icon={<CalendarDays size={17} />} label="This Month Appts" value={kpis.monthAppointments.value} change={kpis.monthAppointments.change} color="#a855f7" />
+        <KpiCard icon={<DollarSign size={17} />} label="Monthly Revenue" value={kpis.monthRevenue.value} change={kpis.monthRevenue.change} color="#059669" prefix="EGP " />
+        <KpiCard icon={<Users size={17} />} label="Total Patients" value={kpis.totalPatients.value} change={kpis.totalPatients.change} color="#c49a6c" />
       </div>
 
       {/* ── Charts row 1 ── */}
@@ -174,7 +174,7 @@ export default function OverviewPage() {
               <AreaChart data={revenueChart}>
                 <defs>
                   <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#082b56" stopOpacity={0.18} />
+                    <stop offset="5%" stopColor="#082b56" stopOpacity={0.18} />
                     <stop offset="95%" stopColor="#082b56" stopOpacity={0.01} />
                   </linearGradient>
                 </defs>
@@ -182,8 +182,16 @@ export default function OverviewPage() {
                 <XAxis dataKey="date" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
                 <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
                 <Tooltip
-                  contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }}
-                  formatter={(v: number) => [`EGP ${v.toLocaleString()}`, 'Revenue']}
+                  contentStyle={{
+                    background: 'var(--surface)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 8,
+                    fontSize: 12
+                  }}
+                  formatter={(value: any) => {
+                    const num = Array.isArray(value) ? Number(value[0]) : Number(value)
+                    return [`EGP ${num.toLocaleString()}`, 'Revenue']
+                  }}
                 />
                 <Area type="monotone" dataKey="revenue" stroke="#082b56" fill="url(#revGrad)" strokeWidth={2} dot={{ r: 3, fill: '#c49a6c' }} />
               </AreaChart>
