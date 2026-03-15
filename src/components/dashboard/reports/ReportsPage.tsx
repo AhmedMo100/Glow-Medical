@@ -19,35 +19,35 @@ import {
 /* ── Types ────────────────────────────────────────────────── */
 type KPI = { value: number; prev?: number; change?: number }
 type ReportData = {
-  period     : string
-  start      : string
-  end        : string
+  period: string
+  start: string
+  end: string
   generatedAt: string
   kpis: {
     totalAppointments: KPI; completedAppts: KPI; cancelledAppts: KPI; paidAppts: KPI
     revenue: KPI; expenses: KPI; netProfit: KPI; newPatients: KPI
     completionRate: KPI; cancellationRate: KPI; collectionRate: KPI
   }
-  revenueChart     : { label: string; revenue: number; expenses: number }[]
-  statusBreakdown  : { status: string; count: number }[]
-  sourceBreakdown  : { source: string; count: number }[]
-  paymentBreakdown : { status: string; count: number }[]
-  topServices      : { name: string; count: number }[]
-  staffPerformance : { name: string; type: string; count: number }[]
+  revenueChart: { label: string; revenue: number; expenses: number }[]
+  statusBreakdown: { status: string; count: number }[]
+  sourceBreakdown: { source: string; count: number }[]
+  paymentBreakdown: { status: string; count: number }[]
+  topServices: { name: string; count: number }[]
+  staffPerformance: { name: string; type: string; count: number }[]
   expenseCategories: { category: string; amount: number }[]
   recentTransactions: any[]
-  savedReports      : { id: number; name: string; period: string; createdAt: string }[]
+  savedReports: { id: number; name: string; period: string; createdAt: string }[]
 }
 
 /* ── palette ─────────────────────────────────────────────── */
 const C = {
-  primary  : '#082b56',
-  accent   : '#c49a6c',
-  success  : '#059669',
-  danger   : '#dc2626',
-  warning  : '#d97706',
-  info     : '#2563eb',
-  purple   : '#a855f7',
+  primary: '#082b56',
+  accent: '#c49a6c',
+  success: '#059669',
+  danger: '#dc2626',
+  warning: '#d97706',
+  info: '#2563eb',
+  purple: '#a855f7',
 }
 const PIES = [C.primary, C.accent, C.info, C.success, C.warning, C.danger, C.purple, '#6b7280']
 
@@ -116,11 +116,11 @@ function PeriodSelector({ period, year, month, onChange }: {
   onChange: (p: string, y: number, m: number) => void
 }) {
   const now = new Date()
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-      {(['today','month','year'] as const).map(p => (
+      {(['today', 'month', 'year'] as const).map(p => (
         <button
           key={p}
           onClick={() => onChange(p, year, month)}
@@ -157,18 +157,18 @@ function PeriodSelector({ period, year, month, onChange }: {
 
 /* ── Main Page ───────────────────────────────────────────── */
 export default function ReportsPage() {
-  const searchParams  = useSearchParams()
-  const initPeriod    = (searchParams.get('period') as string) || 'month'
-  const savedId       = searchParams.get('saved')
+  const searchParams = useSearchParams()
+  const initPeriod = (searchParams.get('period') as string) || 'month'
+  const savedId = searchParams.get('saved')
 
   const now = new Date()
-  const [period,  setPeriod]  = useState(initPeriod)
-  const [year,    setYear]    = useState(now.getFullYear())
-  const [month,   setMonth]   = useState(now.getMonth() + 1)
-  const [data,    setData]    = useState<ReportData | null>(null)
+  const [period, setPeriod] = useState(initPeriod)
+  const [year, setYear] = useState(now.getFullYear())
+  const [month, setMonth] = useState(now.getMonth() + 1)
+  const [data, setData] = useState<ReportData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [saving,  setSaving]  = useState(false)
-  const [error,   setError]   = useState('')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
   const load = useCallback(async () => {
     setLoading(true); setError('')
@@ -197,9 +197,9 @@ export default function ReportsPage() {
     setSaving(true)
     try {
       await fetch('/api/dashboard/reports', {
-        method : 'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body   : JSON.stringify({ period, year, month }),
+        body: JSON.stringify({ period, year, month }),
       })
     } finally { setSaving(false) }
   }
@@ -261,27 +261,27 @@ export default function ReportsPage() {
       {/* ── KPI Grid Row 1 — Appointments ── */}
       <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>Appointments</p>
       <div className="grid-kpi" style={{ marginBottom: '1.25rem' }}>
-        <KpiBox label="Total Appointments" value={kpis.totalAppointments.value}  change={kpis.totalAppointments.change}  color={C.primary} icon={Calendar} />
-        <KpiBox label="Completed"          value={kpis.completedAppts.value}                                             color={C.success} icon={CheckCircle2} />
-        <KpiBox label="Cancelled"          value={kpis.cancelledAppts.value}                                             color={C.danger}  icon={XCircle} />
-        <KpiBox label="Completion Rate"    value={kpis.completionRate.value}   suffix="%"                                color={C.info}    icon={TrendingUp} />
+        <KpiBox label="Total Appointments" value={kpis.totalAppointments.value} change={kpis.totalAppointments.change} color={C.primary} icon={Calendar} />
+        <KpiBox label="Completed" value={kpis.completedAppts.value} color={C.success} icon={CheckCircle2} />
+        <KpiBox label="Cancelled" value={kpis.cancelledAppts.value} color={C.danger} icon={XCircle} />
+        <KpiBox label="Completion Rate" value={kpis.completionRate.value} suffix="%" color={C.info} icon={TrendingUp} />
       </div>
 
       {/* ── KPI Grid Row 2 — Finance ── */}
       <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>Finance</p>
       <div className="grid-kpi" style={{ marginBottom: '1.25rem' }}>
-        <KpiBox label="Total Revenue"  value={kpis.revenue.value}    change={kpis.revenue.change}  color={C.success} icon={DollarSign} prefix="EGP " />
-        <KpiBox label="Total Expenses" value={kpis.expenses.value}                                 color={C.warning} icon={TrendingDown} prefix="EGP " />
-        <KpiBox label="Net Profit"     value={kpis.netProfit.value}                                color={kpis.netProfit.value >= 0 ? C.success : C.danger} icon={TrendingUp} prefix="EGP " />
-        <KpiBox label="Collection Rate" value={kpis.collectionRate.value} suffix="%"              color={C.accent}  icon={CheckCircle2} />
+        <KpiBox label="Total Revenue" value={kpis.revenue.value} change={kpis.revenue.change} color={C.success} icon={DollarSign} prefix="EGP " />
+        <KpiBox label="Total Expenses" value={kpis.expenses.value} color={C.warning} icon={TrendingDown} prefix="EGP " />
+        <KpiBox label="Net Profit" value={kpis.netProfit.value} color={kpis.netProfit.value >= 0 ? C.success : C.danger} icon={TrendingUp} prefix="EGP " />
+        <KpiBox label="Collection Rate" value={kpis.collectionRate.value} suffix="%" color={C.accent} icon={CheckCircle2} />
       </div>
 
       {/* ── KPI Grid Row 3 — Patients ── */}
       <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>Patients</p>
       <div className="grid-kpi" style={{ marginBottom: '1.5rem' }}>
-        <KpiBox label="New Patients"   value={kpis.newPatients.value} change={kpis.newPatients.change} color={C.accent}  icon={Users} />
-        <KpiBox label="Paid Appts"     value={kpis.paidAppts.value}                                    color={C.success} icon={CheckCircle2} />
-        <KpiBox label="Cancellation %" value={kpis.cancellationRate.value} suffix="%"                  color={C.danger}  icon={XCircle} />
+        <KpiBox label="New Patients" value={kpis.newPatients.value} change={kpis.newPatients.change} color={C.accent} icon={Users} />
+        <KpiBox label="Paid Appts" value={kpis.paidAppts.value} color={C.success} icon={CheckCircle2} />
+        <KpiBox label="Cancellation %" value={kpis.cancellationRate.value} suffix="%" color={C.danger} icon={XCircle} />
       </div>
 
       {/* ── Revenue vs Expenses Chart ── */}
@@ -292,17 +292,17 @@ export default function ReportsPage() {
             <ComposedChart data={revenueChart} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
               <defs>
                 <linearGradient id="revGradR" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor={C.primary} stopOpacity={0.15} />
-                  <stop offset="95%" stopColor={C.primary} stopOpacity={0}    />
+                  <stop offset="5%" stopColor={C.primary} stopOpacity={0.15} />
+                  <stop offset="95%" stopColor={C.primary} stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
               <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} tickFormatter={v => `${(v/1000).toFixed(0)}k`} />
+              <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
               <Tooltip content={<ChartTooltip />} />
               <Legend wrapperStyle={{ fontSize: '0.78rem', paddingTop: 8 }} />
-              <Area type="monotone" dataKey="revenue"  name="Revenue"  stroke={C.primary} fill="url(#revGradR)" strokeWidth={2.5} dot={false} />
-              <Bar  dataKey="expenses" name="Expenses" fill={C.warning} radius={[4,4,0,0]} opacity={0.75} />
+              <Area type="monotone" dataKey="revenue" name="Revenue" stroke={C.primary} fill="url(#revGradR)" strokeWidth={2.5} dot={false} />
+              <Bar dataKey="expenses" name="Expenses" fill={C.warning} radius={[4, 4, 0, 0]} opacity={0.75} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -415,7 +415,7 @@ export default function ReportsPage() {
                   <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} />
                   <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} width={90} />
                   <Tooltip contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
-                  <Bar dataKey="count" name="Appointments" radius={[0,6,6,0]}>
+                  <Bar dataKey="count" name="Appointments" radius={[0, 6, 6, 0]}>
                     {staffPerformance.map((_, i) => <Cell key={i} fill={PIES[i % PIES.length]} />)}
                   </Bar>
                 </BarChart>
@@ -434,9 +434,20 @@ export default function ReportsPage() {
               <BarChart data={expenseCategories} margin={{ top: 5, right: 10, left: 10, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                 <XAxis dataKey="category" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} angle={-20} textAnchor="end" />
-                <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} tickFormatter={v => `${(v/1000).toFixed(0)}k`} />
-                <Tooltip contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} formatter={(v: number) => [`EGP ${v.toLocaleString()}`, 'Amount']} />
-                <Bar dataKey="amount" name="Amount" radius={[4,4,0,0]}>
+                <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--surface)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 8,
+                    fontSize: 12
+                  }}
+                  formatter={(value: any) => {
+                    const num = Array.isArray(value) ? Number(value[0]) : Number(value)
+                    return [`EGP ${num.toLocaleString()}`, 'Amount']
+                  }}
+                />
+                <Bar dataKey="amount" name="Amount" radius={[4, 4, 0, 0]}>
                   {expenseCategories.map((_, i) => <Cell key={i} fill={PIES[i % PIES.length]} />)}
                 </Bar>
               </BarChart>
