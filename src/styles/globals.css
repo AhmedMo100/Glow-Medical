@@ -1,0 +1,752 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+
+@import 'tailwindcss';
+
+
+/* =============================================
+   GLOW MEDICAL — DESIGN SYSTEM
+   Palette: Beige · Dark Navy · White · Black
+============================================= */
+
+:root {
+  /* Core Palette */
+  --beige-50: #fdf9f4;
+  --beige-100: #f9f1e6;
+  --beige-200: #f2e3cc;
+  --beige-300: #e8ceab;
+  --beige-400: #d9b48a;
+  --beige-500: #c49a6c;
+  --beige-600: #a8804f;
+
+  --navy-50: #eef2f8;
+  --navy-100: #d0dbed;
+  --navy-200: #9db5d8;
+  --navy-300: #5a85bb;
+  --navy-400: #1f5799;
+  --navy-500: #0e3d75;
+  --navy-600: #082b56;
+  --navy-700: #041b38;
+  --navy-800: #020e1f;
+
+  --white: #ffffff;
+  --off-white: #fafaf7;
+  --cream: #f5ede0;
+  --black: #0a0a0a;
+  --charcoal: #1a1a1a;
+  --gray-soft: #6b7280;
+
+  /* Semantic Tokens */
+  --color-primary: var(--navy-600);
+  --color-primary-lt: var(--navy-400);
+  --color-accent: var(--beige-400);
+  --color-accent-lt: var(--beige-200);
+  --color-bg: var(--off-white);
+  --color-surface: var(--white);
+  --color-text: var(--charcoal);
+  --color-muted: var(--gray-soft);
+  --color-border: var(--beige-200);
+
+  /* Typography */
+  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+
+  /* Spacing */
+  --section-py: 5rem;
+  --container-x: clamp(1.5rem, 5vw, 6rem);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(8, 43, 86, 0.06);
+  --shadow-md: 0 4px 16px rgba(8, 43, 86, 0.10);
+  --shadow-lg: 0 12px 40px rgba(8, 43, 86, 0.14);
+  --shadow-xl: 0 24px 64px rgba(8, 43, 86, 0.18);
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 2rem;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+  --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* =============================================
+   RESET & BASE
+============================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+/* =============================================
+   TYPOGRAPHY SCALE
+============================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--navy-700);
+}
+
+h1 {
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-weight: 600;
+}
+
+h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 600;
+}
+
+h3 {
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 500;
+}
+
+h4 {
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  font-weight: 500;
+}
+
+h5 {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+h6 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--color-muted);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color var(--transition-base);
+}
+
+img,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+/* =============================================
+   UTILITY CLASSES
+============================================= */
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: var(--container-x);
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+  padding-inline: var(--container-x);
+}
+
+.section {
+  padding-block: var(--section-py);
+}
+
+.section-lg {
+  padding-block: calc(var(--section-py) * 1.5);
+}
+
+/* Background Utilities */
+.bg-beige {
+  background-color: var(--beige-100);
+}
+
+.bg-cream {
+  background-color: var(--cream);
+}
+
+.bg-navy {
+  background-color: var(--navy-600);
+}
+
+.bg-navy-dk {
+  background-color: var(--navy-800);
+}
+
+.bg-white {
+  background-color: var(--white);
+}
+
+/* =============================================
+   BUTTON SYSTEM
+============================================= */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  padding: 0.8rem 2rem;
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.08);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.btn:hover::before {
+  opacity: 1;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--navy-600);
+  color: var(--white);
+  border-color: var(--navy-600);
+}
+
+.btn-primary:hover {
+  background: var(--navy-700);
+  border-color: var(--navy-700);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn-accent {
+  background: var(--beige-400);
+  color: var(--white);
+  border-color: var(--beige-400);
+}
+
+.btn-accent:hover {
+  background: var(--beige-500);
+  border-color: var(--beige-500);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--navy-600);
+  border-color: var(--navy-600);
+}
+
+.btn-outline:hover {
+  background: var(--navy-600);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+.btn-outline-white {
+  background: transparent;
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.btn-outline-white:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--white);
+}
+
+.btn-sm {
+  padding: 0.55rem 1.4rem;
+  font-size: 0.8rem;
+}
+
+.btn-lg {
+  padding: 1rem 2.8rem;
+  font-size: 1rem;
+}
+
+/* =============================================
+   CARD SYSTEM
+============================================= */
+
+.card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--beige-200);
+  overflow: hidden;
+  transition: all var(--transition-slow);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: transparent;
+}
+
+.card-beige {
+  background: var(--beige-50);
+  border-color: var(--beige-200);
+}
+
+.card-navy {
+  background: var(--navy-600);
+  border-color: transparent;
+  color: var(--white);
+}
+
+/* =============================================
+   SECTION TITLE PATTERN
+============================================= */
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--beige-500);
+  margin-bottom: 1rem;
+}
+
+.section-label::before {
+  content: '';
+  display: block;
+  width: 2rem;
+  height: 2px;
+  background: var(--beige-400);
+  border-radius: 2px;
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  color: var(--navy-700);
+  margin-bottom: 1rem;
+}
+
+.section-desc {
+  font-size: 1.05rem;
+  color: var(--color-muted);
+  max-width: 580px;
+  line-height: 1.8;
+}
+
+.section-title-centered {
+  text-align: center;
+}
+
+.section-title-centered .section-label {
+  justify-content: center;
+}
+
+.section-title-centered .section-desc {
+  margin-inline: auto;
+}
+
+/* =============================================
+   FORM ELEMENTS
+============================================= */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--navy-600);
+  letter-spacing: 0.02em;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.85rem 1.2rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--charcoal);
+  background: var(--white);
+  border: 1.5px solid var(--beige-300);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: all var(--transition-base);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--beige-500);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--navy-400);
+  box-shadow: 0 0 0 3px rgba(30, 87, 153, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 130px;
+}
+
+/* =============================================
+   BADGE / TAG
+============================================= */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.badge-beige {
+  background: var(--beige-100);
+  color: var(--beige-600);
+}
+
+.badge-navy {
+  background: var(--navy-100);
+  color: var(--navy-600);
+}
+
+.badge-white {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--white);
+}
+
+/* =============================================
+   DIVIDER
+============================================= */
+
+.divider {
+  width: 4rem;
+  height: 3px;
+  background: linear-gradient(90deg, var(--beige-400), var(--navy-300));
+  border-radius: 2px;
+  margin-block: 1.2rem;
+}
+
+.divider-center {
+  margin-inline: auto;
+}
+
+/* =============================================
+   OVERLAY & GRADIENT HELPERS
+============================================= */
+
+.overlay-dark {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+      rgba(4, 27, 56, 0.82) 0%,
+      rgba(8, 43, 86, 0.55) 60%,
+      rgba(30, 80, 140, 0.2) 100%);
+}
+
+.overlay-beige {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+      rgba(245, 235, 224, 0.0) 0%,
+      rgba(245, 235, 224, 0.95) 100%);
+}
+
+.gradient-navy {
+  background: linear-gradient(135deg, var(--navy-700) 0%, var(--navy-500) 100%);
+}
+
+.gradient-beige {
+  background: linear-gradient(135deg, var(--beige-50) 0%, var(--beige-200) 100%);
+}
+
+/* =============================================
+   STAT BOX
+============================================= */
+
+.stat-number {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: var(--navy-600);
+  line-height: 1;
+}
+
+.stat-number-white {
+  color: var(--white);
+}
+
+/* =============================================
+   SCROLL BAR
+============================================= */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--beige-50);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--navy-300);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--navy-500);
+}
+
+/* =============================================
+   ANIMATIONS
+============================================= */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-soft {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.6s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.animate-slide-right {
+  animation: slideRight 0.5s ease forwards;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+}
+
+.delay-400 {
+  animation-delay: 0.4s;
+}
+
+.delay-500 {
+  animation-delay: 0.5s;
+}
+
+/* =============================================
+   RESPONSIVE HELPERS
+============================================= */
+
+@media (max-width: 768px) {
+  :root {
+    --section-py: 3.5rem;
+    --container-x: 1.25rem;
+  }
+
+  h1 {
+    font-size: 2.4rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1.6rem;
+  }
+}
+
+/* =============================================
+   PAGE TRANSITION WRAPPER
+============================================= */
+
+main {
+  animation: fadeIn 0.4s ease;
+}
+
+/* =============================================
+   SELECTION COLOR
+============================================= */
+
+::selection {
+  background: var(--beige-300);
+  color: var(--navy-800);
+}
+
+/* =============================================
+   NAVBAR STICKY GLASS EFFECT
+============================================= */
+
+.navbar-glass {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(232, 205, 171, 0.3);
+  box-shadow: 0 2px 20px rgba(8, 43, 86, 0.07);
+}
+
+/* =============================================
+   HERO SECTION PATTERN OVERLAY
+============================================= */
+
+.hero-pattern {
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(196, 154, 108, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(14, 61, 117, 0.06) 0%, transparent 50%);
+}
+
+/* =============================================
+   MEDICAL CROSS DECORATION
+============================================= */
+
+.medical-cross {
+  position: relative;
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.medical-cross::before,
+.medical-cross::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+  border-radius: 2px;
+}
+
+.medical-cross::before {
+  width: 100%;
+  height: 30%;
+  top: 35%;
+  left: 0;
+}
+
+.medical-cross::after {
+  width: 30%;
+  height: 100%;
+  top: 0;
+  left: 35%;
+}
