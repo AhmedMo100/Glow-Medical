@@ -25,7 +25,8 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "@/src/generated/prisma": ["../node_modules/.prisma/client"]
     }
   },
   "include": [
