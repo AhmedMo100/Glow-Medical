@@ -140,7 +140,7 @@ export default function BlogPublicPage() {
   const filtered  = activeTag ? posts.filter(p => p.tags?.includes(activeTag)) : posts
   const hasFilter = !search && !activeTag && page === 1
   const featuredP = hasFilter ? filtered.find(p => p.isFeatured) : undefined
-  const rest      = filteredP => hasFilter && featuredP ? filtered.filter(p => p !== featuredP) : filtered
+  const rest = hasFilter && featuredP ? filtered.filter(p => p !== featuredP) : filtered
 
   return (
     <>
