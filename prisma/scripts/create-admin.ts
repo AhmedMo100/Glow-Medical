@@ -6,7 +6,7 @@
  */
 
 import 'dotenv/config'
-import { prisma } from '../../src/lib/prisma'
+import prisma from '../../src/lib/prisma'
 import bcrypt from 'bcryptjs'
 import readline from 'readline'
 import { z } from 'zod'
