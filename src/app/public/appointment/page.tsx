@@ -1,14 +1,15 @@
-import type { Metadata } from 'next';
-import { CalendarDays, Phone, Clock, CheckCircle } from 'lucide-react';
-import AppointmentForm from '@/components/sections/AppointmentForm';
+// app/(public)/appointment/page.tsx
+import type { Metadata } from 'next'
+import { CalendarDays, Phone, Clock, CheckCircle } from 'lucide-react'
+import AppointmentForm from '@/components/sections/AppointmentForm'
 
-export const metadata: Metadata = { title: 'Book an Appointment' };
+export const metadata: Metadata = { title: 'Book an Appointment' }
 
 const STEPS = [
   { n: '01', title: 'Fill the Form', desc: 'Provide your details and preferred date.' },
-  { n: '02', title: 'Confirmation',  desc: 'We confirm your slot within 24 hours.' },
-  { n: '03', title: 'Your Visit',    desc: 'Arrive and receive world-class care.' },
-];
+  { n: '02', title: 'Confirmation',  desc: 'We confirm your slot within 24 hours.'   },
+  { n: '03', title: 'Your Visit',    desc: 'Arrive and receive world-class care.'     },
+]
 
 export default function AppointmentPage() {
   return (
@@ -30,12 +31,18 @@ export default function AppointmentPage() {
       {/* Main content */}
       <section className="section" style={{ background: 'var(--off-white)' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '4rem', alignItems: 'start' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
+            gap: 'clamp(2rem, 5vw, 4rem)',
+            alignItems: 'start',
+          }}>
 
             {/* Left sidebar */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+
               {/* How it works */}
-              <div className="card" style={{ padding: '2rem' }}>
+              <div className="card" style={{ padding: 'clamp(1.25rem, 4vw, 2rem)' }}>
                 <h3 style={{ fontFamily: 'var(--font-heading)', color: 'var(--navy-700)', marginBottom: '1.5rem', fontSize: '1.3rem' }}>
                   How It Works
                 </h3>
@@ -55,7 +62,7 @@ export default function AppointmentPage() {
               </div>
 
               {/* Contact quick */}
-              <div className="card" style={{ padding: '2rem', background: 'var(--navy-700)', border: 'none' }}>
+              <div className="card" style={{ padding: 'clamp(1.25rem, 4vw, 2rem)', background: 'var(--navy-700)', border: 'none' }}>
                 <h4 style={{ fontFamily: 'var(--font-heading)', color: '#fff', marginBottom: '1.2rem' }}>Need Immediate Help?</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {[
@@ -75,8 +82,8 @@ export default function AppointmentPage() {
 
               {/* Guarantees */}
               <div className="card" style={{ padding: '1.5rem', background: 'var(--beige-50)' }}>
-                {['No hidden fees', 'Easy rescheduling', 'Confidential consultation', 'Expert second opinions'].map(g => (
-                  <div key={g} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.5rem 0', borderBottom: '1px solid var(--beige-200)' }}>
+                {['No hidden fees', 'Easy rescheduling', 'Confidential consultation', 'Expert second opinions'].map((g, i, arr) => (
+                  <div key={g} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.5rem 0', borderBottom: i < arr.length - 1 ? '1px solid var(--beige-200)' : 'none' }}>
                     <CheckCircle size={15} style={{ color: 'var(--beige-500)', flexShrink: 0 }} />
                     <span style={{ fontSize: '0.88rem', color: 'var(--charcoal)' }}>{g}</span>
                   </div>
@@ -85,7 +92,7 @@ export default function AppointmentPage() {
             </div>
 
             {/* Form */}
-            <div className="card" style={{ padding: '2.5rem' }}>
+            <div className="card" style={{ padding: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
                 <CalendarDays size={24} style={{ color: 'var(--navy-500)' }} />
                 <h2 style={{ fontFamily: 'var(--font-heading)', color: 'var(--navy-700)', fontSize: '1.6rem' }}>
@@ -99,5 +106,5 @@ export default function AppointmentPage() {
         </div>
       </section>
     </>
-  );
+  )
 }

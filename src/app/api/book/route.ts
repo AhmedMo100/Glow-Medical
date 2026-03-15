@@ -16,6 +16,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import twilio from 'twilio'
+import { AppointmentStatus } from '@/generated/prisma'
 
 const twilioClient = twilio(
   process.env.TWILIO_ACCOUNT_SID!,
@@ -47,7 +48,7 @@ function timeShort(d: Date) {
   return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
 }
 
-const ACTIVE_STATUSES = ['PENDING', 'CONFIRMED', 'IN_PROGRESS'] as const
+const ACTIVE_STATUSES: AppointmentStatus[] = ['PENDING', 'CONFIRMED', 'IN_PROGRESS']
 
 // ─────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
