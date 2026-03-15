@@ -1,22 +1,23 @@
 // app/api/dashboard/inventory/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { InventoryStatus } from '@/generated/prisma'
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
-    const search   = searchParams.get('search')   ?? ''
+    const search = searchParams.get('search') ?? ''
     const category = searchParams.get('category') ?? ''
-    const status   = searchParams.get('status')   ?? ''
-    const page     = Math.max(1, Number(searchParams.get('page')  ?? 1))
-    const limit    = Math.min(100, Number(searchParams.get('limit') ?? 20))
+    const status = searchParams.get('status') ?? ''
+    const page = Math.max(1, Number(searchParams.get('page') ?? 1))
+    const limit = Math.min(100, Number(searchParams.get('limit') ?? 20))
 
     const where: any = {}
     if (category) where.category = category
-    if (status)   where.status   = status
-    if (search)   where.OR = [
-      { name    : { contains: search, mode: 'insensitive' } },
-      { sku     : { contains: search, mode: 'insensitive' } },
+    if (status) where.status = status
+    if (search) where.OR = [
+      { name: { contains: search, mode: 'insensitive' } },
+      { sku: { contains: search, mode: 'insensitive' } },
       { supplier: { contains: search, mode: 'insensitive' } },
     ]
 
@@ -24,8 +25,8 @@ export async function GET(req: NextRequest) {
       prisma.inventoryItem.findMany({
         where,
         orderBy: [{ status: 'asc' }, { name: 'asc' }],
-        skip   : (page - 1) * limit,
-        take   : limit,
+        skip: (page - 1) * limit,
+        take: limit,
         include: { _count: { select: { movements: true } } },
       }),
       prisma.inventoryItem.count({ where }),
@@ -33,10 +34,10 @@ export async function GET(req: NextRequest) {
 
     // Status summary counts
     const [inStock, lowStock, outOfStock, expired] = await Promise.all([
-      prisma.inventoryItem.count({ where: { status: 'IN_STOCK'    } }),
-      prisma.inventoryItem.count({ where: { status: 'LOW_STOCK'   } }),
-      prisma.inventoryItem.count({ where: { status: 'OUT_OF_STOCK'} }),
-      prisma.inventoryItem.count({ where: { status: 'EXPIRED'     } }),
+      prisma.inventoryItem.count({ where: { status: 'IN_STOCK' } }),
+      prisma.inventoryItem.count({ where: { status: 'LOW_STOCK' } }),
+      prisma.inventoryItem.count({ where: { status: 'OUT_OF_STOCK' } }),
+      prisma.inventoryItem.count({ where: { status: 'EXPIRED' } }),
     ])
 
     return NextResponse.json({ items, total, page, pages: Math.ceil(total / limit), summary: { inStock, lowStock, outOfStock, expired } })
@@ -61,30 +62,31 @@ export async function POST(req: NextRequest) {
     // Auto-determine status
     const qty = Number(quantity ?? 0)
     const min = Number(minQuantity ?? 5)
-    let status = 'IN_STOCK'
-    if (qty === 0) status = 'OUT_OF_STOCK'
-    else if (qty <= min) status = 'LOW_STOCK'
-    if (expiryDate && new Date(expiryDate) < new Date()) status = 'EXPIRED'
+    let status = 'IN_STOCK' as InventoryStatus
+    if (qty === 0) status = 'OUT_OF_STOCK' as InventoryStatus
+    else if (qty <= min) status = 'LOW_STOCK' as InventoryStatus
+    if (expiryDate && new Date(expiryDate) < new Date()) status = 'EXPIRED' as InventoryStatus
+
 
     const item = await prisma.inventoryItem.create({
       data: {
         name,
-        sku            : sku             || null,
-        barcode        : barcode         || null,
+        sku: sku || null,
+        barcode: barcode || null,
         category,
         status,
-        description    : description     || null,
-        imageUrl       : imageUrl        || null,
-        unit           : unit            || 'piece',
-        quantity       : qty,
-        minQuantity    : min,
+        description: description || null,
+        imageUrl: imageUrl || null,
+        unit: unit || 'piece',
+        quantity: qty,
+        minQuantity: min,
         reorderQuantity: Number(reorderQuantity ?? 10),
-        costPrice      : costPrice       ? Number(costPrice)    : null,
-        sellingPrice   : sellingPrice    ? Number(sellingPrice) : null,
-        supplier       : supplier        || null,
-        supplierPhone  : supplierPhone   || null,
-        expiryDate     : expiryDate      ? new Date(expiryDate) : null,
-        isActive       : isActive        ?? true,
+        costPrice: costPrice ? Number(costPrice) : null,
+        sellingPrice: sellingPrice ? Number(sellingPrice) : null,
+        supplier: supplier || null,
+        supplierPhone: supplierPhone || null,
+        expiryDate: expiryDate ? new Date(expiryDate) : null,
+        isActive: isActive ?? true,
       },
     })
 
