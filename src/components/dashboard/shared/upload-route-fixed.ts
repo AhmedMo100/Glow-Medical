@@ -8,8 +8,8 @@ import { uploadToCloudinary } from '@/lib/cloudinary'
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
-    const file     = formData.get('file')   as File | null
-    const folder   = (formData.get('folder') as string | null) ?? 'general'
+    const file = formData.get('file') as File | null
+    const folder = (formData.get('folder') as string | null) ?? 'general'
 
     if (!file)
       return NextResponse.json({ error: 'لم يتم إرفاق ملف' }, { status: 400 })
@@ -18,9 +18,13 @@ export async function POST(req: NextRequest) {
     if (file.size > 5 * 1024 * 1024)
       return NextResponse.json({ error: 'الحجم أكبر من 5 ميجا' }, { status: 400 })
 
-    const bytes  = await file.arrayBuffer()
+    const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const { url, publicId } = await uploadToCloudinary(buffer, folder)
+
+    const base64 = `data:${file.type};base64,${buffer.toString('base64')}`
+
+    const { url, publicId } = await uploadToCloudinary(base64, folder)
+
 
     return NextResponse.json({ url, publicId })
   } catch (e) {
