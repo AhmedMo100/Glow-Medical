@@ -212,7 +212,8 @@ export default function FinancePage() {
             <h3 style={{ margin: '0 0 1rem', fontSize: '0.88rem', fontWeight: 700 }}>By Category</h3>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
-                <Pie data={catBreakdown} dataKey="amount" nameKey="category" cx="50%" cy="50%" outerRadius={75} label={({ category }) => category.replace(/_/g, ' ')}>
+                <Pie data={catBreakdown} dataKey="amount" nameKey="category" cx="50%" cy="50%" outerRadius={75} label={(p: any) => p.payload?.category?.replace(/_/g, ' ')}
+>
                   {catBreakdown.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                 </Pie>
                 <Tooltip formatter={(v: any) => fmt(Number(v))} />
