@@ -1,3 +1,4 @@
+// components/ui/BlogCard.tsx
 import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, User, ArrowRight } from 'lucide-react';
@@ -16,19 +17,23 @@ function formatDate(date: string | Date) {
 }
 
 export default function BlogCard({ post }: BlogCardProps) {
+  const mainImage = post.images?.[0]; // ← هنا بدل image
+
   return (
     <article className="card group" style={{ overflow: 'hidden' }}>
       {/* Image */}
       <div style={{ position: 'relative', height: '220px', overflow: 'hidden', background: 'var(--beige-100)' }}>
-        {post.image && (
+        {mainImage ? (
           <Image
-            src={post.image}
+            src={mainImage}
             alt={post.title}
             fill
             style={{ objectFit: 'cover', transition: 'transform 0.5s ease' }}
             className="group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, 33vw"
           />
+        ) : (
+          <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem' }}>📝</div>
         )}
         <div style={{
           position: 'absolute', inset: 0,
@@ -41,7 +46,7 @@ export default function BlogCard({ post }: BlogCardProps) {
         {/* Meta */}
         <div style={{ display: 'flex', gap: '1.2rem', marginBottom: '0.9rem' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: 'var(--beige-500)' }}>
-            <Calendar size={12} /> {formatDate(post.publishedAt)}
+            <Calendar size={12} /> {formatDate(post.publishedAt ?? new Date())}
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: 'var(--beige-500)' }}>
             <User size={12} /> {post.author}
