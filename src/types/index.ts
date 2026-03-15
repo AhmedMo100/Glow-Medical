@@ -176,7 +176,6 @@ export interface Service {
   categoryId?: number
   category?: Category
   price: number
-  icon?: keyof typeof ICON_MAP;
   discountedPrice?: number
   duration?: number
   isActive: boolean
@@ -257,6 +256,16 @@ export interface StaffSchedule {
   startTime: string
   endTime: string
   isOff: boolean
+}
+
+// Doctors
+export interface Doctor {
+  id: number
+  name: string
+  specialty: string
+  experience: number
+  bio: string
+  image: string
 }
 
 // ============================================================
