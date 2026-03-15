@@ -25,8 +25,8 @@ export default function BlogCard({ post }: BlogCardProps) {
       <div style={{ position: 'relative', height: '220px', overflow: 'hidden', background: 'var(--beige-100)' }}>
         {mainImage ? (
           <Image
-            src={mainImage}
-            alt={post.title}
+            src={mainImage?.url ?? ''}
+            alt={mainImage?.alt ?? post.title}
             fill
             style={{ objectFit: 'cover', transition: 'transform 0.5s ease' }}
             className="group-hover:scale-105"
