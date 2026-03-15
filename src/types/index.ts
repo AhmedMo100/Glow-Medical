@@ -495,3 +495,11 @@ export interface ChartDataPoint {
   value: number
   color?: string
 }
+
+export interface Testimonial {
+  id: string | number
+  name: string
+  review: string
+  rating: number
+  avatar?: string
+}
