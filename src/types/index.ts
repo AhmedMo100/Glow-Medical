@@ -176,6 +176,7 @@ export interface Service {
   categoryId?: number
   category?: Category
   price: number
+  icon?: keyof typeof ICON_MAP;
   discountedPrice?: number
   duration?: number
   isActive: boolean
@@ -183,6 +184,7 @@ export interface Service {
   order: number
   createdAt: string
 }
+
 
 // ============================================================
 // OFFERS
