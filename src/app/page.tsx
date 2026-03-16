@@ -6,21 +6,25 @@ import DoctorsSection from '@/components/home/DoctorsSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import BlogSection from '@/components/home/BlogSection';
 import AppointmentBanner from '@/components/home/AppointmentBanner';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: 'Glow Medical — Excellence in Healthcare',
+    title: 'Glow Medical — Excellence in Healthcare',
 };
 
 export default function HomePage() {
-  return (
-    <>
-      <HeroSection />
-      <ServicesSection />
-      <StatsSection />
-      <DoctorsSection />
-      <TestimonialsSection />
-      <BlogSection />
-      <AppointmentBanner />
-    </>
-  );
+    return (
+        <>
+            <Navbar />
+            <HeroSection />
+            <ServicesSection />
+            <StatsSection />
+            <DoctorsSection />
+            <TestimonialsSection />
+            <BlogSection />
+            <AppointmentBanner />
+            <Footer />
+        </>
+    );
 }
