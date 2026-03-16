@@ -29,7 +29,7 @@ export default function AppointmentBanner() {
         </p>
 
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/appointment" className="btn btn-accent btn-lg">
+          <Link href="/public/appointment" className="btn btn-accent btn-lg">
             <CalendarDays size={18} /> Book Appointment
           </Link>
           <a href="tel:+1234567890" className="btn btn-outline-white btn-lg">

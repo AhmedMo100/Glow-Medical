@@ -8,7 +8,7 @@ import { ChevronDown, X, Menu, Sparkles } from 'lucide-react';
 type Service = { id: number; name: string; slug: string; categoryId: number | null };
 
 const STATIC_LINKS = [
-  { label: 'Home',    href: '/public/home' },
+  { label: 'Home',    href: '/' },
   { label: 'About',   href: '/public/about' },
   { label: 'Team',    href: '/public/team' },
   { label: 'Blog',    href: '/public/blog' },
@@ -94,7 +94,7 @@ export default function Navbar() {
         }}>
 
           {/* ── Logo ── */}
-          <Link href="/public/home" style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', textDecoration: 'none', flexShrink: 0 }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', textDecoration: 'none', flexShrink: 0 }}>
             <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--navy-600, #082b56)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
                 <rect x="10" y="4" width="4" height="16" rx="2" fill="#c49a6c" />
