@@ -1,5 +1,6 @@
 // src/lib/notifications.ts
 import prisma from './prisma'
+import { Prisma } from '@/generated/prisma'
 
 interface NotifInput {
   type    : string   // "new_appointment" | "new_message" | "new_review" | "low_stock" | "system"
@@ -21,7 +22,7 @@ export async function pushNotification(n: NotifInput) {
         href    : n.href    ?? null,
         icon    : n.icon    ?? null,
         isUrgent: n.isUrgent ?? false,
-        meta    : n.meta    ?? undefined,
+        meta: n.meta as Prisma.JsonObject | undefined,
       },
     })
   } catch (e) {
